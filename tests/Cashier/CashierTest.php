@@ -94,4 +94,26 @@ class CashierTest extends MockeryTestCase
         $cashier->linkUserToStripeCustomer($user, 'fake-token');
     }
 
+    public function testCreateCharge()
+    {
+        $chargeMock = Mockery::mock('alias:\Stripe\Charge');
+        $chargeMock->shouldReceive('create')
+            ->once()
+            ->with([
+                'amount' => 150,
+                'currency' => 'usd',
+                'description' => 'fake description',
+                'customer' => '1'
+            ])
+            ->andReturn('charged');
+
+        $user = Mockery::mock(StripeChargeableUser::class);
+        $user->shouldReceive('getStripeCustomerId')->once()->andReturn('1');
+
+        $cashier = new Cashier('api-key');
+        $response = $cashier->createCharge($user, 150, 'fake description');
+
+        $this->assertEquals('charged', $response);
+    }
+
 }

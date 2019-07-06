@@ -48,4 +48,20 @@ class Cashier
         return $this;
     }
 
+    /**
+     * @param StripeChargeableUser $user
+     * @param int $amountInCents
+     * @param string $description
+     * @return object
+     */
+    public function createCharge(StripeChargeableUser $user, int $amountInCents, string $description): string
+    {
+        return \Stripe\Charge::create([
+            'amount' => $amountInCents,
+            'currency' => 'usd',
+            'description' => $description,
+            'customer' => $user->getStripeCustomerId()
+        ]);
+    }
+    
 }
