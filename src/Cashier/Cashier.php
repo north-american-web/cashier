@@ -124,4 +124,26 @@ class Cashier
 
         return $plan;
     }
+
+    /**
+     * @param StripeChargeableUser $user
+     * @param $planId
+     * @return \Stripe\Subscription
+     */
+    public function createSubscription(StripeChargeableUser $user, $planId)
+    {
+        if( !$user->getStripeCustomerId() ){
+            throw new \InvalidArgumentException('$user must have a Stripe customer id. Did you forget to call
+                Cashier::linkUserToStripeCustomer to get one?');
+        }
+
+        return \Stripe\Subscription::create([
+            'customer' => $user->getStripeCustomerId(),
+            'items' => [
+                [
+                    'plan' => $planId
+                ]
+            ]
+        ]);
+    }
 }

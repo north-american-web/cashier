@@ -223,6 +223,22 @@ class CashierTest extends MockeryTestCase
         $this->assertEquals('plan-id', $plan->id);
     }
 
+    public function testCreateSubscriptionWithValidUser()
+    {
+        $subscriptionMock = Mockery::mock('alias:\Stripe\Subscription');
+        $subscriptionMock->shouldReceive('create')->once()
+            ->with([
+                'customer' => 'customer-id',
+                'items' => [['plan' => 'plan-id']]
+            ])->andReturn((object)['id' => 'subscription-id']);
 
+        $user = Mockery::mock(StripeChargeableUser::class);
+        $user->shouldReceive('getStripeCustomerId')->andReturn('customer-id');
+
+        $cashier = new Cashier('stripe-api-key');
+        $subscription = $cashier->createSubscription($user, 'plan-id');
+
+        $this->assertEquals('subscription-id', $subscription->id);
+    }
 
 }
