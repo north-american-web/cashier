@@ -23,8 +23,8 @@ class CashierTest extends MockeryTestCase
 
     public function testLinkUserToStripeCustomerWithGoodData()
     {
-        $chargeMock = Mockery::mock('alias:\Stripe\Customer');
-        $chargeMock->shouldReceive('create')
+        $customerMock = Mockery::mock('alias:\Stripe\Customer');
+        $customerMock->shouldReceive('create')
             ->once()
             ->with([
                 'email' => 'customer@example.com',
@@ -48,8 +48,8 @@ class CashierTest extends MockeryTestCase
 
     public function testLinkUserToStripeCustomerWithGoodDataButNoName()
     {
-        $chargeMock = Mockery::mock('alias:\Stripe\Customer');
-        $chargeMock->shouldReceive('create')
+        $customerMock = Mockery::mock('alias:\Stripe\Customer');
+        $customerMock->shouldReceive('create')
             ->once()
             ->with([
                 'email' => 'customer@example.com',
@@ -84,8 +84,8 @@ class CashierTest extends MockeryTestCase
 
     public function testLinkUserToStripeCustomerWithCustomerIdAlreadyExists()
     {
-        $chargeMock = Mockery::mock('alias:\Stripe\Customer');
-        $chargeMock->shouldReceive('create')->never();
+        $customerMock = Mockery::mock('alias:\Stripe\Customer');
+        $customerMock->shouldReceive('create')->never();
 
         $user = Mockery::mock(StripeChargeableUser::class);
         $user->shouldReceive(['getStripeCustomerId' => '123'])->once();
