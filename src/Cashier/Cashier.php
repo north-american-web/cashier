@@ -30,6 +30,7 @@ class Cashier
 
         if( !$user->getEmail() ){
             throw new \Exception('Cannot create Stripe customer without an email address.');
+            throw new \InvalidArgumentException('$user must have an email address.');
         }
 
         $data = [
