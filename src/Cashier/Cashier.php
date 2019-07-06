@@ -29,7 +29,6 @@ class Cashier
         }
 
         if( !$user->getEmail() ){
-            throw new \Exception('Cannot create Stripe customer without an email address.');
             throw new \InvalidArgumentException('$user must have an email address.');
         }
 
@@ -64,5 +63,65 @@ class Cashier
             'customer' => $user->getStripeCustomerId()
         ]);
     }
-    
+
+    /**
+     * @param int $amount
+     * @param string $interval
+     * @param string $productId
+     * @param int $intervalCount
+     * @return object|null
+     * @throws \Stripe\Error\Api
+     */
+    public function findPlan(int $amount, string $interval, string $productId, int $intervalCount = 1)
+    {
+        $params = [
+            'active' => true,
+            'product' => $productId,
+            'limit' => 100
+        ];
+        do {
+            $list = \Stripe\Plan::all($params);
+            foreach( $list->data as $plan ){
+                if( $plan->amount == $amount
+                    && $plan->interval == $interval
+                    && $plan->interval_count == $intervalCount ) {
+                    return $plan;
+                }
+                $params['starting_after'] = $plan->id;
+            }
+        } while( $list->has_more );
+
+        return null;
+    }
+
+    /**
+     * @param int $amount
+     * @param string $interval
+     * @param string $productId
+     * @param int $intervalCount
+     * @return \Stripe\Plan
+     */
+    public function createPlan(int $amount, string $interval, string $productId, $intervalCount = 1)
+    {
+        $allowedIntervals = [
+            'day',
+            'week',
+            'month',
+            'year'
+        ];
+        if( !in_array($interval, $allowedIntervals)){
+            throw new \InvalidArgumentException('Invalid interval. Must be one of '
+                . implode(', ', $allowedIntervals) . ". \"$interval\" provided." );
+        }
+
+        $plan = \Stripe\Plan::create([
+            'amount' => $amount,
+            'currency' => 'usd',
+            'interval' => $interval,
+            'interval_count' => $intervalCount,
+            'product' => $productId,
+        ]);
+
+        return $plan;
+    }
 }
