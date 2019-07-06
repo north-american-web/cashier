@@ -1,0 +1,23 @@
+{
+  "name": "nawebco/cashier",
+  "description": "A Stripe subscriptions and charges bundle for Symfony.",
+  "authors": [
+    {
+      "name": "David Kidd",
+      "role": "Developer"
+    }
+  ],
+  "license": "MIT",
+  "require": {
+    "php": ">=7.2",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8.2"
+  },
+  "autoload": {
+    "psr-4": {
+      "NAWebCo\\Cashier\\": "src/Cashier"
+    }
+  }
+}
